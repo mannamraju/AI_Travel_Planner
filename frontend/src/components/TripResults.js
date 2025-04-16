@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './TripResults.css';
 
-const TripResults = ({ tripData }) => {
+const TripResults = ({ tripData, tripPlan }) => {
   const [selectedDateRange, setSelectedDateRange] = useState(0);
   
   // Handle missing or incomplete data gracefully
@@ -27,6 +27,10 @@ const TripResults = ({ tripData }) => {
   const routePlan = tripData.route_plan || {};
   const restaurants = tripData.restaurant_recommendations || [];
   
+  if (!tripPlan) return null;
+
+  const { routeDetails, hotelRecommendations } = tripPlan;
+
   return (
     <div className="trip-results-container">
       <h2>Your Yellowstone Adventure Plan</h2>
@@ -188,6 +192,59 @@ const TripResults = ({ tripData }) => {
       <div className="book-trip-container">
         <button className="book-trip-button">Book This Trip</button>
       </div>
+
+      {/* Route Details */}
+      <section className="route-details">
+        <h3>Route Details</h3>
+        <div className="route-summary">
+          <p><strong>From:</strong> {routeDetails.origin}</p>
+          <p><strong>To:</strong> {routeDetails.destination}</p>
+          <p><strong>Total Distance:</strong> {routeDetails.total_distance} miles</p>
+          <p><strong>Total Duration:</strong> {routeDetails.total_duration} hours</p>
+        </div>
+
+        <div className="waypoints">
+          <h4>Stops Along the Way</h4>
+          {routeDetails.waypoints.map((waypoint, index) => (
+            <div key={index} className="waypoint">
+              <p><strong>Stop {index + 1}:</strong> {waypoint.location}</p>
+              <p>Distance from previous: {waypoint.distance} miles</p>
+              <p>Driving time: {waypoint.duration} hours</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Hotel Recommendations */}
+      <section className="hotel-recommendations">
+        <h3>Recommended Hotels</h3>
+        <div className="hotels-grid">
+          {hotelRecommendations.map((hotel, index) => (
+            <div key={index} className="hotel-card">
+              <h4>{hotel.name}</h4>
+              <p><strong>Location:</strong> {hotel.location}</p>
+              <p><strong>Type:</strong> {hotel.area_type === 'stopover' ? 'En Route Stop' : 'Final Destination'}</p>
+              <p><strong>Price:</strong> ${hotel.price}/night</p>
+              <p><strong>Rating:</strong> {hotel.rating} ⭐</p>
+              <div className="amenities">
+                <strong>Amenities:</strong>
+                <ul>
+                  {hotel.amenities.map((amenity, i) => (
+                    <li key={i}>{amenity}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="availability-status">
+                {hotel.availability ? (
+                  <span className="available">Available</span>
+                ) : (
+                  <span className="unavailable">Not Available</span>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

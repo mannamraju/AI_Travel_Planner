@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './TripForm.css';
 
 const TripForm = ({ onSubmit }) => {
@@ -12,9 +12,28 @@ const TripForm = ({ onSubmit }) => {
       preferred_cuisines: ['American', 'Italian'],
       accessibility_needs: false,
       hiking_interest: true
-    }
+    },
+    selectedRoute: ''
   });
-  
+
+  const [availableRoutes, setAvailableRoutes] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Fetch available routes when component mounts
+    fetchAvailableRoutes();
+  }, []);
+
+  const fetchAvailableRoutes = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/routes/available');
+      const data = await response.json();
+      setAvailableRoutes(data.routes);
+    } catch (error) {
+      console.error('Error fetching routes:', error);
+    }
+  };
+
   const cuisineOptions = [
     'American', 'Italian', 'Mexican', 'Asian', 'Seafood', 'Steakhouse', 
     'Vegetarian', 'Fast Food', 'Cafe', 'Fine Dining'
@@ -54,9 +73,29 @@ const TripForm = ({ onSubmit }) => {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    onSubmit(formData);
+    setLoading(true);
+    
+    try {
+      // Fetch route details
+      const routeResponse = await fetch(`http://localhost:8000/routes/${formData.selectedRoute}/details`);
+      const routeDetails = await routeResponse.json();
+      
+      // Fetch hotel recommendations
+      const hotelResponse = await fetch(`http://localhost:8000/hotels/recommended?route_id=${formData.selectedRoute}&check_in=${formData.travel_window_start}&check_out=${formData.travel_window_end}&guests=2`);
+      const hotelRecommendations = await hotelResponse.json();
+      
+      onSubmit({
+        ...formData,
+        routeDetails,
+        hotelRecommendations: hotelRecommendations.results
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -170,8 +209,28 @@ const TripForm = ({ onSubmit }) => {
             <label htmlFor="accessibility_needs">Accessibility needs</label>
           </div>
         </div>
+
+        <div className="form-group">
+          <label htmlFor="route">Select Route:</label>
+          <select 
+            id="route"
+            name="selectedRoute"
+            value={formData.selectedRoute}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select a route</option>
+            {availableRoutes.map(route => (
+              <option key={route.id} value={route.id}>
+                {route.name} ({route.total_distance} miles, {route.total_duration} hours)
+              </option>
+            ))}
+          </select>
+        </div>
         
-        <button type="submit" className="submit-button">Plan My Trip</button>
+        <button type="submit" className="submit-button" disabled={loading}>
+          {loading ? 'Planning...' : 'Plan My Trip'}
+        </button>
       </form>
     </div>
   );

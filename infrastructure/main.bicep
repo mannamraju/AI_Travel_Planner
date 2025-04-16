@@ -159,15 +159,15 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'AZURE_OPENAI_ENDPOINT'
-          value: 'https://maopenai050.openai.azure.com/'
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVault.name}.vault.azure.net/secrets/OpenAiEndpoint/)'
         }
         {
           name: 'AZURE_OPENAI_DEPLOYMENT'
-          value: 'gpt-4o'
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVault.name}.vault.azure.net/secrets/OpenAiDeployment/)'
         }
         {
           name: 'OPENAI_API_VERSION'
-          value: '2024-12-01-preview'
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVault.name}.vault.azure.net/secrets/OpenAiVersion/)'
         }
         {
           name: 'AZURE_OPENAI_API_KEY'

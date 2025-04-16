@@ -15,7 +15,62 @@ weather_data = {}
 hotel_data = {}
 restaurant_data = {}
 reservation_data = {}
-route_data = {}
+
+# Predefined routes with waypoints and recommended hotels
+PREDEFINED_ROUTES = {
+    "san_jose": {
+        "name": "San Jose to Yellowstone",
+        "origin": "San Jose, CA",
+        "destination": "Yellowstone National Park",
+        "waypoints": [
+            {"location": "Reno, NV", "distance": 260, "duration": 4.5},
+            {"location": "Salt Lake City, UT", "distance": 520, "duration": 7.5},
+            {"location": "Idaho Falls, ID", "distance": 210, "duration": 3.5}
+        ],
+        "total_distance": 990,
+        "total_duration": 15.5,
+        "recommended_hotels": [
+            {"location": "Reno", "area": "stopover"},
+            {"location": "Salt Lake City", "area": "stopover"},
+            {"location": "West Yellowstone", "area": "destination"}
+        ]
+    },
+    "redmond": {
+        "name": "Redmond to Yellowstone",
+        "origin": "Redmond, WA",
+        "destination": "Yellowstone National Park",
+        "waypoints": [
+            {"location": "Spokane, WA", "distance": 280, "duration": 4.0},
+            {"location": "Missoula, MT", "distance": 200, "duration": 3.0},
+            {"location": "Bozeman, MT", "distance": 203, "duration": 3.0}
+        ],
+        "total_distance": 683,
+        "total_duration": 10.0,
+        "recommended_hotels": [
+            {"location": "Spokane", "area": "stopover"},
+            {"location": "Bozeman", "area": "stopover"},
+            {"location": "Gardiner", "area": "destination"}
+        ]
+    },
+    "new_york": {
+        "name": "New York to Yellowstone",
+        "origin": "New York, NY",
+        "destination": "Yellowstone National Park",
+        "waypoints": [
+            {"location": "Chicago, IL", "distance": 790, "duration": 12.0},
+            {"location": "Sioux Falls, SD", "distance": 580, "duration": 8.5},
+            {"location": "Billings, MT", "distance": 450, "duration": 6.5}
+        ],
+        "total_distance": 1820,
+        "total_duration": 27.0,
+        "recommended_hotels": [
+            {"location": "Chicago", "area": "stopover"},
+            {"location": "Sioux Falls", "area": "stopover"},
+            {"location": "Billings", "area": "stopover"},
+            {"location": "Cody", "area": "destination"}
+        ]
+    }
+}
 
 @app.get("/")
 async def root():
@@ -236,6 +291,59 @@ async def plan_route(origin: str, destination: str, waypoints: Optional[List[str
         "total_duration_minutes": round(total_duration),
         "total_duration_hours": round(total_duration / 60, 1)
     }
+
+@app.get("/routes/available")
+async def get_available_routes():
+    """Get list of predefined routes to Yellowstone"""
+    return {
+        "routes": [
+            {
+                "id": route_id,
+                "name": route_data["name"],
+                "origin": route_data["origin"],
+                "total_distance": route_data["total_distance"],
+                "total_duration": route_data["total_duration"]
+            }
+            for route_id, route_data in PREDEFINED_ROUTES.items()
+        ]
+    }
+
+@app.get("/routes/{route_id}/details")
+async def get_route_details(route_id: str):
+    """Get detailed information about a specific route"""
+    if route_id not in PREDEFINED_ROUTES:
+        raise HTTPException(status_code=404, detail="Route not found")
+    return PREDEFINED_ROUTES[route_id]
+
+@app.get("/hotels/recommended")
+async def get_recommended_hotels(route_id: str, check_in: str, check_out: str, guests: int = 2):
+    """Get hotel recommendations based on the selected route"""
+    if route_id not in PREDEFINED_ROUTES:
+        raise HTTPException(status_code=404, detail="Route not found")
+    
+    route = PREDEFINED_ROUTES[route_id]
+    hotels = []
+    
+    for hotel_area in route["recommended_hotels"]:
+        area_hotels = [
+            {
+                "name": f"{hotel['name']} ({hotel_area['location']})",
+                "location": hotel_area["location"],
+                "area_type": hotel_area["area"],
+                "price": hotel["price"],
+                "rating": hotel["rating"],
+                "amenities": hotel["amenities"],
+                "availability": hotel["availability"]
+            }
+            for hotel in await search_hotels(
+                hotel_area["location"], 
+                check_in, 
+                check_out
+            )["results"]
+        ]
+        hotels.extend(area_hotels)
+    
+    return {"results": hotels}
 
 if __name__ == "__main__":
     import uvicorn

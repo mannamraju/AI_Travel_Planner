@@ -7,7 +7,8 @@ function App() {
   const [tripData, setTripData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+  const [tripPlan, setTripPlan] = useState(null);
+
   const handlePlanTrip = async (formData) => {
     setLoading(true);
     setError(null);
@@ -179,6 +180,10 @@ function App() {
         };
         
         setTripData(simulatedResponse);
+        setTripPlan({
+          routeDetails: simulatedResponse.route_plan,
+          hotelRecommendations: simulatedResponse.restaurant_recommendations
+        });
         setLoading(false);
       }, 2000); // 2 second delay to simulate API call
     } catch (err) {
@@ -213,7 +218,7 @@ function App() {
           </div>
         ) : tripData ? (
           <div className="results-view">
-            <TripResults tripData={tripData} />
+            <TripResults tripData={tripData} tripPlan={tripPlan} />
             <div className="reset-container">
               <button className="reset-button" onClick={handleReset}>Plan Another Trip</button>
             </div>

@@ -13,10 +13,10 @@ from models.trip_request import TripRequest, TripResponse
 
 # Load environment variables
 # First try to load from .keys file for local development
-keys_path = Path(__file__).parents[1] / '.keys'
-if keys_path.exists():
-    print(f"Loading development environment from {keys_path}")
-    load_dotenv(dotenv_path=keys_path)
+env_file = Path(__file__).parents[1] / '.keys'
+if env_file.exists():
+    print(f"Loading development environment from {env_file}")
+    load_dotenv(dotenv_path=env_file)
 else:
     # Fall back to regular .env file or environment variables
     print("No .keys file found, using environment variables")

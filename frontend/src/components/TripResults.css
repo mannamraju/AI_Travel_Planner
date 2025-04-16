@@ -289,3 +289,108 @@
   color: #3f51b5;
   font-style: italic;
 }
+
+.trip-results {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.route-details, .hotel-recommendations {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.route-summary {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+.waypoints {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.waypoint {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 1rem;
+    position: relative;
+}
+
+.waypoint::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    width: 2px;
+    height: 10px;
+    background: #dee2e6;
+}
+
+.hotels-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.hotel-card {
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.hotel-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hotel-card h4 {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+}
+
+.amenities {
+    margin: 1rem 0;
+}
+
+.amenities ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.amenities li {
+    background: #e9ecef;
+    padding: 0.25rem 0.75rem;
+    border-radius: 16px;
+    font-size: 0.875rem;
+}
+
+.availability-status {
+    margin-top: 1rem;
+    text-align: right;
+}
+
+.available {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.unavailable {
+    color: #dc3545;
+    font-weight: bold;
+}
