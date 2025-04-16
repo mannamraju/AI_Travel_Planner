@@ -1,15 +1,15 @@
 param location string = resourceGroup().location
-param appName string = 'yellowstone-trip-planner'
+param appName string = 'trip-plan'
 param environment string = 'dev'
 
 // Generate unique names for resources
-var uniqueId = uniqueString(resourceGroup().id)
-var appServiceName = '${appName}-${environment}-${uniqueId}'
-var appServicePlanName = '${appName}-plan-${environment}-${uniqueId}'
-var openAiName = '${appName}-ai-${environment}-${uniqueId}'
-var cosmosDbName = '${appName}-db-${environment}-${uniqueId}'
-var keyVaultName = '${appName}-kv-${environment}-${uniqueId}'
-var appInsightsName = '${appName}-insights-${environment}-${uniqueId}'
+//var uniqueId = uniqueString(resourceGroup().id)
+var appServiceName = '${appName}-svcname'
+var appServicePlanName = '${appName}-appplan'
+//var openAiName = '${appName}-ai-${environment}-${uniqueId}'
+var cosmosDbName = '${appName}-db'
+var keyVaultName = '${appName}-kv'
+var appInsightsName = '${appName}-ins'
 
 // App Service Plan
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
@@ -52,6 +52,7 @@ resource keyVault 'Microsoft.KeyVault/vaults@2022-07-01' = {
   }
 }
 
+/*
 // Azure OpenAI Service
 resource openAiService 'Microsoft.CognitiveServices/accounts@2022-12-01' = {
   name: openAiName
@@ -80,6 +81,7 @@ resource gpt4oDeployment 'Microsoft.CognitiveServices/accounts/deployments@2023-
     }
   }
 }
+*/
 
 // Cosmos DB Account
 resource cosmosDbAccount 'Microsoft.DocumentDB/databaseAccounts@2022-08-15' = {
@@ -157,7 +159,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'AZURE_OPENAI_ENDPOINT'
-          value: openAiService.properties.endpoint
+          value: 'https://maopenai050.openai.azure.com/'
         }
         {
           name: 'AZURE_OPENAI_DEPLOYMENT'
@@ -165,7 +167,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         }
         {
           name: 'OPENAI_API_VERSION'
-          value: '2023-05-15'
+          value: '2024-12-01-preview'
         }
         {
           name: 'AZURE_OPENAI_API_KEY'
@@ -200,5 +202,5 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
-output appServiceUrl string = 'https://${appService.properties.defaultHostName}'
-output openAiEndpoint string = openAiService.properties.endpoint
+//output appServiceUrl string = 'https://${appService.properties.defaultHostName}'
+//output openAiEndpoint string = openAiService.properties.endpoint

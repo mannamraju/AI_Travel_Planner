@@ -1,0 +1,25 @@
+# API Keys for local development
+# Do not commit this file to version control
+
+# Azure OpenAI Configuration
+AZURE_OPENAI_API_KEY=C8W0q3rogNmf0fbaTbl360ZUbq4jfQ8cCii8b0qq6EAOaLpb5BrXJQQJ99ALACYeBjFXJ3w3AAABACOGyYI9
+AZURE_OPENAI_ENDPOINT=https://maopenai050.openai.azure.com/
+AZURE_OPENAI_DEPLOYMENT=gpt-4o
+AZURE_OPENAI_API_VERSION=2024-12-01-preview
+SUBSCRIPTION_ID=69642945-f464-4724-ba83-205eecbe5937
+
+# Weather API (RapidAPI - Open Weather)
+WEATHER_API_KEY=your_rapidapi_key_here
+
+# Bing Search API
+BING_SEARCH_API_KEY=your_bing_search_api_key_here
+
+# Other service keys
+MAPS_API_KEY=your_maps_api_key_here
+RESTAURANT_API_KEY=your_restaurant_api_key_here
+
+# Security keys
+JWT_SECRET_KEY=a_random_secret_key_for_local_development_only
+
+# Database connection strings
+COSMOS_DB_CONNECTION_STRING=your_cosmos_db_connection_string_here
