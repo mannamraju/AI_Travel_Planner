@@ -14,178 +14,224 @@ function App() {
     setError(null);
     
     try {
-      // Format dates for API
-      const formattedData = {
-        ...formData,
-        travel_window_start: new Date(formData.travel_window_start).toISOString(),
-        travel_window_end: new Date(formData.travel_window_end).toISOString()
-      };
-      
       // In a real app, this would call your FastAPI backend
       // For demo, we'll simulate a response after a delay
-      setTimeout(() => {
-        // Simulate API response with dummy data
-        const simulatedResponse = {
-          starting_location: formData.starting_location,
-          duration_days: formData.trip_duration_days,
-          recommended_dates: {
-            recommended_date_ranges: [
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          // Simulate API response with dummy data
+          const simulatedResponse = {
+            starting_location: formData.starting_location,
+            duration_days: formData.trip_duration_days,
+            recommended_dates: {
+              recommended_date_ranges: [
+                {
+                  start_date: "2025-07-15",
+                  end_date: "2025-07-20",
+                  total_score: 0.86,
+                  weather_score: 0.88,
+                  crowd_score: 0.82,
+                  wildlife_score: 0.90
+                },
+                {
+                  start_date: "2025-07-22",
+                  end_date: "2025-07-27",
+                  total_score: 0.81,
+                  weather_score: 0.85,
+                  crowd_score: 0.76,
+                  wildlife_score: 0.85
+                },
+                {
+                  start_date: "2025-08-05",
+                  end_date: "2025-08-10",
+                  total_score: 0.79,
+                  weather_score: 0.82,
+                  crowd_score: 0.74,
+                  wildlife_score: 0.83
+                }
+              ],
+              reasoning: "The recommended dates in July offer excellent weather conditions, moderate crowd levels, and excellent wildlife viewing opportunities. This combination provides the best overall experience based on your trip parameters."
+            },
+            weather_forecast: [
               {
-                start_date: "2025-07-15",
-                end_date: "2025-07-20",
-                total_score: 0.86,
-                weather_score: 0.88,
-                crowd_score: 0.82,
-                wildlife_score: 0.90
+                date: "2025-07-15",
+                condition: "Sunny",
+                high_temp_f: 76,
+                low_temp_f: 45,
+                precipitation_chance: 5
               },
               {
-                start_date: "2025-07-22",
-                end_date: "2025-07-27",
-                total_score: 0.81,
-                weather_score: 0.85,
-                crowd_score: 0.76,
-                wildlife_score: 0.85
+                date: "2025-07-16",
+                condition: "Partly Cloudy",
+                high_temp_f: 74,
+                low_temp_f: 43,
+                precipitation_chance: 15
               },
               {
-                start_date: "2025-08-05",
-                end_date: "2025-08-10",
-                total_score: 0.79,
-                weather_score: 0.82,
-                crowd_score: 0.74,
-                wildlife_score: 0.83
+                date: "2025-07-17",
+                condition: "Clear",
+                high_temp_f: 78,
+                low_temp_f: 44,
+                precipitation_chance: 0
+              },
+              {
+                date: "2025-07-18",
+                condition: "Partly Cloudy",
+                high_temp_f: 72,
+                low_temp_f: 41,
+                precipitation_chance: 20
+              },
+              {
+                date: "2025-07-19",
+                condition: "Sunny",
+                high_temp_f: 75,
+                low_temp_f: 42,
+                precipitation_chance: 5
+              },
+              {
+                date: "2025-07-20",
+                condition: "Clear",
+                high_temp_f: 77,
+                low_temp_f: 44,
+                precipitation_chance: 0
               }
             ],
-            reasoning: "The recommended dates in July offer excellent weather conditions, moderate crowd levels, and excellent wildlife viewing opportunities. This combination provides the best overall experience based on your trip parameters."
-          },
-          weather_forecast: [
-            {
-              date: "2025-07-15",
-              condition: "Sunny",
-              high_temp_f: 76,
-              low_temp_f: 45,
-              precipitation_chance: 5
+            route_plan: {
+              segments: [
+                {
+                  from: formData.starting_location,
+                  to: "West Yellowstone",
+                  distance_miles: 325.4,
+                  duration_minutes: 300,
+                  road_names: ["I-15 N", "US-20 E"]
+                },
+                {
+                  from: "West Yellowstone",
+                  to: "Old Faithful",
+                  distance_miles: 30.5,
+                  duration_minutes: 45,
+                  road_names: ["US-191 N", "Grand Loop Road"]
+                },
+                {
+                  from: "Old Faithful",
+                  to: "Grand Canyon of the Yellowstone",
+                  distance_miles: 38.2,
+                  duration_minutes: 60,
+                  road_names: ["Grand Loop Road"]
+                },
+                {
+                  from: "Grand Canyon of the Yellowstone",
+                  to: "Mammoth Hot Springs",
+                  distance_miles: 42.0,
+                  duration_minutes: 75,
+                  road_names: ["Grand Loop Road"]
+                }
+              ],
+              total_distance_miles: 436.1,
+              total_duration_minutes: 480,
+              total_duration_hours: 8.0
             },
-            {
-              date: "2025-07-16",
-              condition: "Partly Cloudy",
-              high_temp_f: 74,
-              low_temp_f: 43,
-              precipitation_chance: 15
-            },
-            {
-              date: "2025-07-17",
-              condition: "Clear",
-              high_temp_f: 78,
-              low_temp_f: 44,
-              precipitation_chance: 0
-            },
-            {
-              date: "2025-07-18",
-              condition: "Partly Cloudy",
-              high_temp_f: 72,
-              low_temp_f: 41,
-              precipitation_chance: 20
-            },
-            {
-              date: "2025-07-19",
-              condition: "Sunny",
-              high_temp_f: 75,
-              low_temp_f: 42,
-              precipitation_chance: 5
-            },
-            {
-              date: "2025-07-20",
-              condition: "Clear",
-              high_temp_f: 77,
-              low_temp_f: 44,
-              precipitation_chance: 0
-            }
-          ],
-          route_plan: {
-            segments: [
+            restaurant_recommendations: [
               {
-                from: formData.starting_location,
-                to: "West Yellowstone",
-                distance_miles: 325.4,
-                duration_minutes: 300,
-                road_names: ["I-15 N", "US-20 E"]
+                name: "Madison Crossing Lounge",
+                cuisine: "American",
+                price_level: "moderate",
+                rating: 4.3,
+                address: "121 Madison Ave, West Yellowstone",
+                phone: "406-555-1234",
+                accepts_reservations: true,
+                available_times: ["5:00 PM", "6:30 PM", "8:00 PM"]
               },
               {
-                from: "West Yellowstone",
-                to: "Old Faithful",
-                distance_miles: 30.5,
-                duration_minutes: 45,
-                road_names: ["US-191 N", "Grand Loop Road"]
+                name: "Wild West Pizzeria",
+                cuisine: "Italian",
+                price_level: "budget",
+                rating: 4.1,
+                address: "14 Madison Ave, West Yellowstone",
+                phone: "406-555-3456",
+                accepts_reservations: false
               },
               {
-                from: "Old Faithful",
-                to: "Grand Canyon of the Yellowstone",
-                distance_miles: 38.2,
-                duration_minutes: 60,
-                road_names: ["Grand Loop Road"]
+                name: "Old Faithful Inn Dining Room",
+                cuisine: "American",
+                price_level: "moderate",
+                rating: 4.0,
+                address: "Old Faithful, Yellowstone National Park",
+                phone: "307-555-4567",
+                accepts_reservations: true,
+                available_times: ["5:30 PM", "7:00 PM"]
               },
               {
-                from: "Grand Canyon of the Yellowstone",
-                to: "Mammoth Hot Springs",
-                distance_miles: 42.0,
-                duration_minutes: 75,
-                road_names: ["Grand Loop Road"]
+                name: "Canyon Lodge Dining Room",
+                cuisine: "American",
+                price_level: "moderate",
+                rating: 3.8,
+                address: "Grand Canyon Area, Yellowstone National Park",
+                phone: "307-555-5678",
+                accepts_reservations: true,
+                available_times: ["6:00 PM", "7:30 PM"]
               }
-            ],
-            total_distance_miles: 436.1,
-            total_duration_minutes: 480,
-            total_duration_hours: 8.0
-          },
-          restaurant_recommendations: [
-            {
-              name: "Madison Crossing Lounge",
-              cuisine: "American",
-              price_level: "moderate",
-              rating: 4.3,
-              address: "121 Madison Ave, West Yellowstone",
-              phone: "406-555-1234",
-              accepts_reservations: true,
-              available_times: ["5:00 PM", "6:30 PM", "8:00 PM"]
+            ]
+          };
+          
+          setTripData(simulatedResponse);
+          setTripPlan({
+            routeDetails: {
+              origin: formData.starting_location,
+              destination: "Yellowstone National Park",
+              total_distance: "436.1",
+              total_duration: "8.0",
+              waypoints: [
+                {
+                  location: "West Yellowstone",
+                  distance: "325.4",
+                  duration: "5.0"
+                },
+                {
+                  location: "Old Faithful",
+                  distance: "30.5",
+                  duration: "0.75"
+                },
+                {
+                  location: "Grand Canyon of Yellowstone",
+                  distance: "38.2",
+                  duration: "1.0"
+                }
+              ]
             },
-            {
-              name: "Wild West Pizzeria",
-              cuisine: "Italian",
-              price_level: "budget",
-              rating: 4.1,
-              address: "14 Madison Ave, West Yellowstone",
-              phone: "406-555-3456",
-              accepts_reservations: false
-            },
-            {
-              name: "Old Faithful Inn Dining Room",
-              cuisine: "American",
-              price_level: "moderate",
-              rating: 4.0,
-              address: "Old Faithful, Yellowstone National Park",
-              phone: "307-555-4567",
-              accepts_reservations: true,
-              available_times: ["5:30 PM", "7:00 PM"]
-            },
-            {
-              name: "Canyon Lodge Dining Room",
-              cuisine: "American",
-              price_level: "moderate",
-              rating: 3.8,
-              address: "Grand Canyon Area, Yellowstone National Park",
-              phone: "307-555-5678",
-              accepts_reservations: true,
-              available_times: ["6:00 PM", "7:30 PM"]
-            }
-          ]
-        };
-        
-        setTripData(simulatedResponse);
-        setTripPlan({
-          routeDetails: simulatedResponse.route_plan,
-          hotelRecommendations: simulatedResponse.restaurant_recommendations
-        });
-        setLoading(false);
-      }, 2000); // 2 second delay to simulate API call
+            hotelRecommendations: [
+              {
+                name: "Lake Yellowstone Hotel",
+                location: "Lake Area",
+                area_type: "destination",
+                price: 299,
+                rating: 4.5,
+                amenities: ["Restaurant", "Historic Building", "Lake Views"],
+                availability: true
+              },
+              {
+                name: "Old Faithful Inn",
+                location: "Old Faithful Area",
+                area_type: "destination",
+                price: 259,
+                rating: 4.7,
+                amenities: ["Restaurant", "Historic Lodge", "Geyser Views"],
+                availability: true
+              },
+              {
+                name: "Mammoth Hot Springs Hotel",
+                location: "Mammoth Area",
+                area_type: "destination",
+                price: 219,
+                rating: 4.2,
+                amenities: ["Restaurant", "Gift Shop", "Terrace Views"],
+                availability: false
+              }
+            ]
+          });
+          resolve();
+        }, 2000);
+      });
+      setLoading(false);
     } catch (err) {
       setError('Failed to plan trip. Please try again.');
       setLoading(false);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './TripForm.css';
 
 const TripForm = ({ onSubmit }) => {
@@ -13,26 +13,14 @@ const TripForm = ({ onSubmit }) => {
       accessibility_needs: false,
       hiking_interest: true
     },
-    selectedRoute: ''
+    selectedRoute: 'classic'
   });
 
-  const [availableRoutes, setAvailableRoutes] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // Fetch available routes when component mounts
-    fetchAvailableRoutes();
-  }, []);
-
-  const fetchAvailableRoutes = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/routes/available');
-      const data = await response.json();
-      setAvailableRoutes(data.routes);
-    } catch (error) {
-      console.error('Error fetching routes:', error);
-    }
-  };
+  const availableRoutes = [
+    { id: 'classic', name: 'Classic Loop', total_distance: '140', total_duration: '8' },
+    { id: 'scenic', name: 'Scenic Route', total_distance: '180', total_duration: '10' },
+    { id: 'express', name: 'Express Tour', total_distance: '100', total_duration: '6' }
+  ];
 
   const cuisineOptions = [
     'American', 'Italian', 'Mexican', 'Asian', 'Seafood', 'Steakhouse', 
@@ -73,29 +61,9 @@ const TripForm = ({ onSubmit }) => {
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    setLoading(true);
-    
-    try {
-      // Fetch route details
-      const routeResponse = await fetch(`http://localhost:8000/routes/${formData.selectedRoute}/details`);
-      const routeDetails = await routeResponse.json();
-      
-      // Fetch hotel recommendations
-      const hotelResponse = await fetch(`http://localhost:8000/hotels/recommended?route_id=${formData.selectedRoute}&check_in=${formData.travel_window_start}&check_out=${formData.travel_window_end}&guests=2`);
-      const hotelRecommendations = await hotelResponse.json();
-      
-      onSubmit({
-        ...formData,
-        routeDetails,
-        hotelRecommendations: hotelRecommendations.results
-      });
-    } catch (error) {
-      console.error('Error submitting form:', error);
-    } finally {
-      setLoading(false);
-    }
+    onSubmit(formData);
   };
 
   return (
@@ -219,7 +187,6 @@ const TripForm = ({ onSubmit }) => {
             onChange={handleChange}
             required
           >
-            <option value="">Select a route</option>
             {availableRoutes.map(route => (
               <option key={route.id} value={route.id}>
                 {route.name} ({route.total_distance} miles, {route.total_duration} hours)
@@ -228,8 +195,8 @@ const TripForm = ({ onSubmit }) => {
           </select>
         </div>
         
-        <button type="submit" className="submit-button" disabled={loading}>
-          {loading ? 'Planning...' : 'Plan My Trip'}
+        <button type="submit" className="submit-button">
+          Plan My Trip
         </button>
       </form>
     </div>

@@ -27,9 +27,38 @@ const TripResults = ({ tripData, tripPlan }) => {
   const routePlan = tripData.route_plan || {};
   const restaurants = tripData.restaurant_recommendations || [];
   
-  if (!tripPlan) return null;
-
-  const { routeDetails, hotelRecommendations } = tripPlan;
+  // Early return if no trip plan data
+  if (!tripPlan?.routeDetails || !tripPlan?.hotelRecommendations) {
+    return (
+      <div className="trip-results-container">
+        <h2>Your Yellowstone Adventure Plan</h2>
+        {/* Show at least the date recommendations */}
+        <div className="results-section">
+          <h3>
+            <i className="fa fa-calendar"></i>
+            Recommended Travel Dates
+          </h3>
+          <div className="date-options">
+            {dateRanges.map((range, index) => (
+              <div 
+                key={index} 
+                className={`date-option ${selectedDateRange === index ? 'selected' : ''}`}
+                onClick={() => handleDateRangeSelect(index)}
+              >
+                <h4>Option {index + 1}</h4>
+                <p>{range.start_date} to {range.end_date}</p>
+                {range.total_score && (
+                  <span className="score-badge">
+                    Rating: {(range.total_score * 100).toFixed(0)}%
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="trip-results-container">
@@ -197,15 +226,15 @@ const TripResults = ({ tripData, tripPlan }) => {
       <section className="route-details">
         <h3>Route Details</h3>
         <div className="route-summary">
-          <p><strong>From:</strong> {routeDetails.origin}</p>
-          <p><strong>To:</strong> {routeDetails.destination}</p>
-          <p><strong>Total Distance:</strong> {routeDetails.total_distance} miles</p>
-          <p><strong>Total Duration:</strong> {routeDetails.total_duration} hours</p>
+          <p><strong>From:</strong> {tripPlan.routeDetails.origin}</p>
+          <p><strong>To:</strong> {tripPlan.routeDetails.destination}</p>
+          <p><strong>Total Distance:</strong> {tripPlan.routeDetails.total_distance} miles</p>
+          <p><strong>Total Duration:</strong> {tripPlan.routeDetails.total_duration} hours</p>
         </div>
 
         <div className="waypoints">
           <h4>Stops Along the Way</h4>
-          {routeDetails.waypoints.map((waypoint, index) => (
+          {tripPlan.routeDetails.waypoints.map((waypoint, index) => (
             <div key={index} className="waypoint">
               <p><strong>Stop {index + 1}:</strong> {waypoint.location}</p>
               <p>Distance from previous: {waypoint.distance} miles</p>
@@ -219,7 +248,7 @@ const TripResults = ({ tripData, tripPlan }) => {
       <section className="hotel-recommendations">
         <h3>Recommended Hotels</h3>
         <div className="hotels-grid">
-          {hotelRecommendations.map((hotel, index) => (
+          {tripPlan.hotelRecommendations.map((hotel, index) => (
             <div key={index} className="hotel-card">
               <h4>{hotel.name}</h4>
               <p><strong>Location:</strong> {hotel.location}</p>

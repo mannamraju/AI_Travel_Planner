@@ -1,46 +1,56 @@
-import os
-import sys
-from pathlib import Path
-from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 import uvicorn
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime, timedelta
+from typing import Dict, Any, Optional
+from pydantic import BaseModel
 
+from config import Config
 from agents.trip_planner import YellowstoneTripPlanner
-from services.auth_service import get_current_user
-from models.trip_request import TripRequest, TripResponse
 
-# Load environment variables
-# First try to load from .keys file for local development
-env_file = Path(__file__).parents[1] / '.keys'
-if env_file.exists():
-    print(f"Loading development environment from {env_file}")
-    load_dotenv(dotenv_path=env_file)
-else:
-    # Fall back to regular .env file or environment variables
-    print("No .keys file found, using environment variables")
-    load_dotenv()
-
-# Initialize FastAPI app
-app = FastAPI(title="Yellowstone Trip Planner")
+app = FastAPI()
+config = Config()
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Update for production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize the agent
-trip_planner = YellowstoneTripPlanner()
+class TripRequest(BaseModel):
+    starting_location: str
+    travel_window_start: datetime
+    travel_window_end: datetime
+    trip_duration_days: int
+    preferences: Optional[Dict[str, Any]] = None
 
-# Routes
-@app.post("/api/plan-trip", response_model=TripResponse)
-async def plan_trip(request: TripRequest, user=Depends(get_current_user)):
-    """Generate a trip plan for Yellowstone National Park"""
+@app.get("/")
+async def root():
+    mode_names = {
+        1: "Local Dummy Data",
+        2: "Azure OpenAI Suggestions",
+        3: "Live API Integration"
+    }
+    return {
+        "message": "Server is running",
+        "mode": mode_names.get(config.app_mode.value, "Unknown"),
+        "status": "ready"
+    }
+
+@app.post("/api/plan-trip")
+async def plan_trip(request: TripRequest):
+    # Validate Azure configuration if needed
+    if config.is_azure_suggestions_mode:
+        error = config.validate_azure_config()
+        if error:
+            raise HTTPException(status_code=500, detail=error)
+    
+    # Initialize trip planner with current mode
+    trip_planner = YellowstoneTripPlanner()
+    
     try:
         trip_plan = await trip_planner.plan_trip(
             starting_location=request.starting_location,
@@ -53,8 +63,5 @@ async def plan_trip(request: TripRequest, user=Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Mount static files for the frontend
-app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="static")
-
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
