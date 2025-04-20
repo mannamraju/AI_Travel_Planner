@@ -4,9 +4,9 @@
 set -e
 
 # Variables
-RESOURCE_GROUP="AgentTravel"
+RESOURCE_GROUP="AITravelPlanner"
 LOCATION="westus2"
-APP_NAME="trip-plan"
+APP_NAME="ai-travel-planner"
 ENVIRONMENT="dev"
 
 # Check Python version

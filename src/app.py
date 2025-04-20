@@ -1,12 +1,11 @@
-import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional
 from pydantic import BaseModel
 
-from config import Config
-from agents.trip_planner import YellowstoneTripPlanner
+from src.config import Config
+from src.agents.trip_planner import YellowstoneTripPlanner
 
 app = FastAPI()
 config = Config()
@@ -62,6 +61,3 @@ async def plan_trip(request: TripRequest):
         return trip_plan
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-if __name__ == "__main__":
-    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)

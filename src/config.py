@@ -18,10 +18,26 @@ class Config:
     
     def _initialize(self):
         self.app_mode = AppMode(int(os.getenv('APP_MODE', '1')))
-        self.azure_openai_deployment = os.getenv('AZURE_OPENAI_DEPLOYMENT')
-        self.azure_openai_endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
-        self.azure_openai_api_key = os.getenv('AZURE_OPENAI_API_KEY')
-        self.openai_api_version = os.getenv('OPENAI_API_VERSION', '2024-02-15-preview')
+        
+        # Read Azure OpenAI credentials from .keys file
+        keys_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.keys')
+        if os.path.exists(keys_path):
+            with open(keys_path, 'r') as f:
+                keys = {}
+                for line in f:
+                    if '=' in line:
+                        key, value = line.strip().split('=', 1)
+                        keys[key.strip()] = value.strip()
+                
+                self.azure_openai_deployment = keys.get('AZURE_OPENAI_DEPLOYMENT')
+                self.azure_openai_endpoint = keys.get('AZURE_OPENAI_ENDPOINT')
+                self.azure_openai_api_key = keys.get('AZURE_OPENAI_API_KEY')
+                self.openai_api_version = keys.get('OPENAI_API_VERSION', '2024-02-15-preview')
+        else:
+            self.azure_openai_deployment = None
+            self.azure_openai_endpoint = None
+            self.azure_openai_api_key = None
+            self.openai_api_version = '2024-02-15-preview'
 
     @property
     def is_dummy_mode(self) -> bool:

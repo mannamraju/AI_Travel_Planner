@@ -1,12 +1,10 @@
 param location string = resourceGroup().location
-param appName string = 'trip-plan'
+param appName string = 'ai-travel-planner'
 param environment string = 'dev'
 
 // Generate unique names for resources
-//var uniqueId = uniqueString(resourceGroup().id)
 var appServiceName = '${appName}-svcname'
 var appServicePlanName = '${appName}-appplan'
-//var openAiName = '${appName}-ai-${environment}-${uniqueId}'
 var cosmosDbName = '${appName}-db'
 var keyVaultName = '${appName}-kv'
 var appInsightsName = '${appName}-ins'

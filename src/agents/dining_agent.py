@@ -8,10 +8,10 @@ from langchain.agents.output_parsers import OpenAIFunctionsAgentOutputParser
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import AzureChatOpenAI
 
-from tools.restaurant_tool import RestaurantTool
-from tools.reservation_tool import ReservationTool
-from tools.bing_search_tool import BingSearchTool
 from ..config import Config
+from ..tools.restaurant_tool import RestaurantTool
+from ..tools.reservation_tool import ReservationTool
+from ..tools.bing_search_tool import BingSearchTool
 
 class DiningAgent:
     """Specialized agent for restaurant recommendations and reservations"""

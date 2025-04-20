@@ -247,8 +247,8 @@ function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>Yellowstone Trip Planner</h1>
-        <p>Plan your perfect adventure to Yellowstone National Park</p>
+        <h1>AI Travel Planner</h1>
+        <p>Plan your perfect adventure with AI assistance</p>
       </header>
       
       <main className="app-main">
@@ -275,7 +275,7 @@ function App() {
       </main>
       
       <footer className="app-footer">
-        <p>© 2025 Yellowstone Trip Planner | Powered by Azure OpenAI</p>
+        <p>© 2025 AI Travel Planner | Powered by Azure OpenAI</p>
       </footer>
     </div>
   );

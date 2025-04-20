@@ -26,6 +26,7 @@ venv/
 # API Keys and secrets
 .keys
 *.keys
+*.pem
 .env.local
 .env.development.local
 .env.test.local

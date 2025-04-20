@@ -108,9 +108,9 @@ class CalendarOptimizerTool(BaseTool):
             
         # US holidays are more crowded
         # (simplified - would check actual holiday dates in production)
-        if (month == 5 and start_date.day >= 25) or  # Memorial Day
-           (month == 7 and start_date.day >= 1 and start_date.day <= 7) or  # July 4th
-           (month == 9 and start_date.day <= 7):  # Labor Day
+        if ((month == 5 and start_date.day >= 25) or    # Memorial Day
+            (month == 7 and start_date.day >= 1 and start_date.day <= 7) or    # July 4th
+            (month == 9 and start_date.day <= 7)):    # Labor Day
             base_score -= 0.2
             
         return max(0.1, min(1.0, base_score + random.uniform(-0.1, 0.1)))

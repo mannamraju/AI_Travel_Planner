@@ -1,14 +1,17 @@
-from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-import requests
+import aiohttp
+import json
+import asyncio
+
+from .base_tool import CustomBaseTool
 
 class RestaurantRequest(BaseModel):
     location: str = Field(..., description="Location to search for restaurants")
-    cuisine: Optional[str] = Field(None, description="Type of cuisine (e.g., American, Italian)")
-    price_level: str = Field("moderate", description="Price level (budget, moderate, expensive)")
+    cuisine: Optional[str] = Field(None, description="Preferred cuisine type")
+    price_level: str = Field(default="moderate", description="Price level (budget, moderate, expensive)")
 
-class RestaurantTool(BaseTool):
+class RestaurantTool(CustomBaseTool):
     name = "restaurant_finder"
     description = "Find restaurants in specific locations with optional cuisine and price filters"
     args_schema = RestaurantRequest
@@ -19,21 +22,32 @@ class RestaurantTool(BaseTool):
     
     def _run(self, location: str, cuisine: Optional[str] = None, price_level: str = "moderate") -> Dict[str, Any]:
         """Search for restaurants and return results"""
+        return asyncio.run(self._arun(location, cuisine, price_level))
+    
+    async def _arun(self, location: str, cuisine: Optional[str] = None, price_level: str = "moderate") -> Dict[str, Any]:
+        """Async implementation of restaurant search"""
         try:
-            response = requests.get(
-                f"{self.api_url}/restaurants/search",
-                params={
-                    "location": location,
-                    "cuisine": cuisine,
-                    "price_level": price_level
-                }
-            )
+            params = {
+                "location": location,
+                "price_level": price_level
+            }
+            if cuisine:
+                params["cuisine"] = cuisine
             
-            if response.status_code == 200:
-                return response.json()
-            else:
-                print(f"Warning: Restaurant API returned status code {response.status_code}")
-                return self._get_fallback_results(location)
+            # Using context managers for proper cleanup
+            async with aiohttp.ClientSession() as session:
+                # Disable SSL verification
+                conn = aiohttp.TCPConnector(ssl=False)
+                async with session.get(
+                    f"{self.api_url}/restaurants/search",
+                    params=params,
+                    connector=conn
+                ) as response:
+                    if response.status == 200:
+                        return await response.json()
+                    else:
+                        print(f"Warning: Restaurant API returned status code {response.status}")
+                        return self._get_fallback_results(location)
                 
         except Exception as e:
             print(f"Warning: Error calling restaurant API: {e}")

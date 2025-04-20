@@ -1,8 +1,8 @@
-# Yellowstone Trip Planner - Project Guide
+# AI-Powered Trip Planner - Project Guide
 
 ## Project Overview
 
-The Yellowstone Trip Planner is an intelligent application that helps users plan comprehensive trips to Yellowstone National Park. It leverages AI agents, modern web technologies, and external APIs to create personalized trip plans with optimal dates, routes, weather forecasts, and dining recommendations.
+The AI-Powered Trip Planner is an intelligent application that helps users plan comprehensive trips to their desired destinations. It leverages AI agents, modern web technologies, and external APIs to create personalized trip plans with optimal dates, routes, weather forecasts, and dining recommendations.
 
 ## Architecture
 
@@ -52,7 +52,7 @@ The agent system follows a hierarchical structure where specialized agents are c
 | `orchestrator_agent.py` | Coordination | Manages workflow and parallel execution of specialized agents |
 | `calendar_agent.py` | Date Optimization | Finds optimal travel dates based on multiple factors |
 | `weather_agent.py` | Weather Forecasting | Provides weather data for specific locations and dates |
-| `route_agent.py` | Route Planning | Creates optimal driving routes to and around Yellowstone |
+| `route_agent.py` | Route Planning | Creates optimal driving routes between destinations |
 | `dining_agent.py` | Restaurant Finder | Recommends restaurants along routes with reservation capabilities |
 
 #### 2. Tools
@@ -128,10 +128,10 @@ Support services for application functionality:
 ## Key Features
 
 - **Parallel Agent Architecture**: Specialized agents work simultaneously when possible
-- **Real-time Weather Integration**: Weather forecasts use the Open Weather API
-- **Intelligent Date Selection**: Optimal dates based on weather, crowds, and wildlife viewing
+- **Real-time Weather Integration**: Weather forecasts for travel destinations
+- **Intelligent Date Selection**: Optimal dates based on weather, events, and local factors
 - **Interactive UI**: User-friendly interface for both inputting preferences and viewing results
-- **Reservation Capabilities**: Restaurant recommendations with availability information
+- **Reservation Capabilities**: Restaurant and accommodation recommendations with availability information
 
 ## Technology Stack
 
@@ -142,7 +142,85 @@ Support services for application functionality:
 
 ## Development Setup
 
-See the README.md file for instructions on setting up the development environment, including API keys and local testing.
+The application supports three distinct operating modes:
+
+1. **Local Testing Mode (Mode 1)**
+   - Returns randomized dummy data for quick testing
+   - No external API calls or Azure OpenAI usage
+   - Useful for UI development and basic flow testing
+   - Set `APP_MODE=1` in .env file
+
+2. **Azure Suggestions Mode (Mode 2)**
+   - Uses Azure OpenAI to generate intelligent suggestions
+   - Based on historical patterns and expert knowledge
+   - No external API calls, but requires Azure OpenAI credentials
+   - Set `APP_MODE=2` in .env file
+
+3. **Live API Mode (Mode 3)**
+   - Makes real API calls to external services
+   - Uses actual weather, route, and restaurant data
+   - Requires all API credentials to be configured
+   - Set `APP_MODE=3` in .env file
+
+### Environment Configuration
+
+Create a `.env` file in the root directory with the following variables:
+
+```
+APP_MODE=2  # Choose mode 1, 2, or 3
+AZURE_OPENAI_DEPLOYMENT=your-deployment-name
+AZURE_OPENAI_ENDPOINT=your-endpoint
+AZURE_OPENAI_API_KEY=your-api-key
+OPENAI_API_VERSION=2024-02-15-preview  # Or your preferred version
+```
+
+Alternatively, you can store your Azure OpenAI credentials in a `.keys` file in the root directory. The application will automatically read credentials from this file if present.
+
+### Running Locally
+
+1. Install dependencies:
+```bash
+# Install Python dependencies
+pip install -r requirements.txt
+
+# Install frontend dependencies
+cd frontend
+npm install
+cd ..
+```
+
+2. Start the backend server:
+```bash
+# Start with proper handling of node_modules directory
+uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload-exclude="**/node_modules/**"
+```
+
+3. In a separate terminal, start the frontend:
+```bash
+cd frontend
+npm start
+```
+
+The application will be available at:
+- Backend API: http://localhost:8000
+- Frontend UI: http://localhost:3000
+
+### Key Dependencies
+
+#### Backend
+- FastAPI for the API server
+- Uvicorn for ASGI server
+- LangChain and LangChain OpenAI for AI capabilities
+- Aiohttp for async HTTP requests
+- Watchfiles for improved development reloading
+- Python-dotenv for environment management
+
+#### Frontend
+- React for UI components
+- React Router for navigation
+- Axios for API requests
+
+See the README.md file for additional setup instructions, including API keys and local testing.
 
 ## Deployment
 

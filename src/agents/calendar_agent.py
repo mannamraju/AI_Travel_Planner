@@ -9,9 +9,9 @@ from langchain.agents.output_parsers import OpenAIFunctionsAgentOutputParser
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_openai import AzureChatOpenAI
 
-from tools.calendar_tool import CalendarOptimizerTool
-from tools.bing_search_tool import BingSearchTool
 from ..config import Config
+from ..tools.calendar_tool import CalendarOptimizerTool
+from ..tools.bing_search_tool import BingSearchTool
 
 class CalendarAgent:
     """Specialized agent for finding optimal travel dates for Yellowstone trips"""

@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Dict, Any
 import os
 from datetime import datetime, timedelta
 
@@ -6,11 +6,11 @@ from langchain.agents import AgentExecutor
 from langchain.agents.format_scratchpad import format_to_openai_function_messages
 from langchain.agents.output_parsers import OpenAIFunctionsAgentOutputParser
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_openai import AzureChatOpenAI
+from langchain_community.chat_models import AzureChatOpenAI
 
 from ..config import Config
-from tools.weather_tool import WeatherTool
-from tools.bing_search_tool import BingSearchTool
+from ..tools.weather_tool import WeatherTool
+from ..tools.bing_search_tool import BingSearchTool
 
 class WeatherAgent:
     """Specialized agent for weather forecasting for Yellowstone trips"""
