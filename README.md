@@ -1,4 +1,4 @@
-# Yellowstone Trip Planner
+# Trip Planner with Agentic AI
 
 An intelligent trip planning application for Yellowstone National Park powered by LangChain and Azure OpenAI.
 
